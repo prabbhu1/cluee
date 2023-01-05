@@ -1,0 +1,57 @@
+9
+
+import matplotlib.pyplot as plt
+import pandas            as pd
+import numpy             as np 
+#-------------------------------------------------------------------- 1
+def localWeightRegression(xmat,ymat,k):
+    m,n   =  np.shape(xmat)
+    ypred =  np.zeros(m)
+    for i in range(m):
+      ypred[i] = xmat[i]*localWeight(xmat[i],xmat,ymat,k)
+    return ypred
+
+#-------------------------------------------------------------------- 2
+def localWeight(point,xmat,ymat,k):
+    wei =  kernel(point,xmat,k)
+    W   =  (X.T*(wei*X)).I*(X.T*(wei*ymat.T))
+    return W
+    
+#-------------------------------------------------------------------- 3 
+def kernel(point,xmat, k):
+  m,n     =  np.shape(xmat)
+  weights =  np.mat(np.eye((m))) 
+  for j in range(m):
+     xxx         =  point - X[j]
+     weights[j,j] =  np.exp(xxx*xxx.T/(-2.0*k**2)) 
+  return weights
+
+#-------------------------------------------------------------------- 4
+def graphPlot(X,ypred): 
+    sort      =   X[:,1].argsort(0) 
+    xsort     =   X[sort][:,0] 
+    fig       =   plt.figure()
+    ax        =   fig.add_subplot(1,1,1)
+    
+    ax.scatter(bill,tip, color='green')
+    ax.plot(xsort[:,1],ypred[sort], color = 'red', linewidth=5)
+    plt.xlabel('Total bill')
+    plt.ylabel('Tip')
+    plt.show(); 
+
+#-------------------------------------------------------------------------
+data   =  pd.read_csv('data10_tips.csv')
+bill   =  np.array(data.total_bill) 
+tip    =  np.array(data.tip)
+ 
+mbill  =  np.mat(bill) 
+mtip   =  np.mat(tip)
+m      =  np.shape(mbill)[1]
+one    =  np.mat(np.ones(m))
+X      =  np.hstack((one.T,mbill.T)) 
+
+ypred  =  localWeightRegression(X,mtip,0.5) 
+graphPlot(X,ypred)
+
+
+
